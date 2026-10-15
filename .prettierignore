@@ -1,0 +1,4 @@
+# pnpm が書き出すファイル
+pnpm-lock.yaml
+# git の管理外の手元のメモ
+*.local.md

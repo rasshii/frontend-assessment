@@ -1,8 +1,235 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
+  "plugins": ["react", "typescript", "oxc", "unicorn", "import"],
+  "categories": {
+    "correctness": "error"
+  },
   "rules": {
     "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
+    "react/only-export-components": ["warn", { "allowConstantExport": true }],
+    "import/no-relative-parent-imports": "error"
+  },
+  "overrides": [
+    {
+      "files": ["src/components/**", "src/lib/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "react-router",
+                "message": "react-router は app/router.tsx と use-facilitator-list-params.ts だけが使う"
+              },
+              {
+                "name": "@tanstack/react-query",
+                "message": "@tanstack/react-query は app/ と、features の api/ と hooks/ だけが使う"
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["@/app/**", "@/features/**"],
+                "message": "共有の層 (components / lib) は、app と features を import しない"
+              },
+              {
+                "group": ["@/testing/**"],
+                "message": "testing/ はテストからだけ使う"
+              },
+              { "group": ["./*", "./**"], "message": "import は @/... で書く" }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/*/lib/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "react-router",
+                "message": "react-router は app/router.tsx と use-facilitator-list-params.ts だけが使う"
+              },
+              {
+                "name": "@tanstack/react-query",
+                "message": "@tanstack/react-query は app/ と、features の api/ と hooks/ だけが使う"
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["@/app/**"],
+                "message": "features は app を import しない"
+              },
+              {
+                "group": [
+                  "@/features/*/api/**",
+                  "@/features/*/hooks/**",
+                  "@/features/*/components/**"
+                ],
+                "message": "features の lib/ は、features の中のほかのディレクトリを import しない"
+              },
+              {
+                "group": ["@/testing/**"],
+                "message": "testing/ はテストからだけ使う"
+              },
+              { "group": ["./*", "./**"], "message": "import は @/... で書く" }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/*/api/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "react-router",
+                "message": "react-router は app/router.tsx と use-facilitator-list-params.ts だけが使う"
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["@/app/**"],
+                "message": "features は app を import しない"
+              },
+              {
+                "group": [
+                  "@/features/*/hooks/**",
+                  "@/features/*/components/**"
+                ],
+                "message": "features の中は components → hooks → api → lib の向きだけ"
+              },
+              {
+                "group": ["@/testing/**"],
+                "message": "testing/ はテストからだけ使う"
+              },
+              { "group": ["./*", "./**"], "message": "import は @/... で書く" }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/*/hooks/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "react-router",
+                "message": "react-router は app/router.tsx と use-facilitator-list-params.ts だけが使う"
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["@/app/**"],
+                "message": "features は app を import しない"
+              },
+              {
+                "group": ["@/features/*/components/**"],
+                "message": "features の中は components → hooks → api → lib の向きだけ"
+              },
+              {
+                "group": ["@/testing/**"],
+                "message": "testing/ はテストからだけ使う"
+              },
+              { "group": ["./*", "./**"], "message": "import は @/... で書く" }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/*/hooks/use-facilitator-list-params.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/app/**"],
+                "message": "features は app を import しない"
+              },
+              {
+                "group": ["@/features/*/components/**"],
+                "message": "features の中は components → hooks → api → lib の向きだけ"
+              },
+              {
+                "group": ["@/testing/**"],
+                "message": "testing/ はテストからだけ使う"
+              },
+              { "group": ["./*", "./**"], "message": "import は @/... で書く" }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/*/components/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "react-router",
+                "message": "react-router は app/router.tsx と use-facilitator-list-params.ts だけが使う"
+              },
+              {
+                "name": "@tanstack/react-query",
+                "message": "@tanstack/react-query は app/ と、features の api/ と hooks/ だけが使う"
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["@/app/**"],
+                "message": "features は app を import しない"
+              },
+              {
+                "group": ["@/testing/**"],
+                "message": "testing/ はテストからだけ使う"
+              },
+              { "group": ["./*", "./**"], "message": "import は @/... で書く" }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/app/**", "src/main.tsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/testing/**"],
+                "message": "testing/ はテストからだけ使う"
+              },
+              { "group": ["./*", "./**"], "message": "import は @/... で書く" }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/testing/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              { "group": ["./*", "./**"], "message": "import は @/... で書く" }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

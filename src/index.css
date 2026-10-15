@@ -15,5 +15,7 @@
    * デザインの書体 (Hiragino Sans) を持つのは macOS だけ。
    * Windows は Meiryo、Linux は Noto Sans 系に落とす。
    */
-  --font-sans: "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, "Noto Sans JP", "Noto Sans CJK JP", sans-serif;
+  --font-sans:
+    "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, "Noto Sans JP",
+    "Noto Sans CJK JP", sans-serif;
 }
