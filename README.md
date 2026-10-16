@@ -54,7 +54,7 @@ oxlint と ESLint は、別々のコマンドで流します ([ADR 0006](docs/ad
 
 ### 構成
 
-一覧の条件は URL に置き、URL が変わると取得し直し、取得の状態から画面に出すものを決めて描画します。
+一覧の条件は URL に置き、URL が変わると取得し直し、取得の状態から画面に出すものを決めて描画します。図の矢印は、呼び出しと、hook のあいだを渡る値を表します (hook のあいだの値は、ページが受け取って渡します)。
 
 ```mermaid
 flowchart TB
@@ -75,19 +75,20 @@ flowchart TB
   api["課題の API<br/>GET /api/facilitators"]
 
   url -- "読む" --> params
-  params -- "書き換える (ページ送り・ソート・検索)" --> url
-  lastpage -- "範囲外なら最終ページに置き換える" --> url
+  params -- "書き換える (ページ送り・ソート・検索・最終ページへの置き換え)" --> url
+  lastpage -- "範囲外なら replacePage で最終ページに置き換える" --> params
   page --> params
   page --> facilitators
   page --> lastpage
   page -- "値と操作の関数を渡す" --> parts
   params -- "一覧の条件" --> facilitators
   facilitators --> view
+  facilitators -- "結果・いまの条件の結果か" --> lastpage
   facilitators --> tq --> fetcher
   fetcher -- "同じオリジンの /api" --> proxy --> api
 ```
 
-いまの条件の結果が範囲外 (存在しないページ) のときは、3 つ目の hook (`use-last-page-correction`) が URL を最終ページに置き換えます。
+いまの条件の結果が範囲外 (存在しないページ) のときは、3 つ目の hook (`use-last-page-correction`) が、ページから受け取った URL の hook の `replacePage` で、最終ページに置き換えます。
 
 ### hook と部品の役割の分担
 
@@ -97,7 +98,7 @@ flowchart TB
 | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `use-facilitator-list-params` | URL のクエリを一覧の条件 (ページ・ソートの列と向き・検索語) に直し、4 つの操作 (ページを変える、ページを置き換える、ソートを切り替える、検索を確定する) を返す。URL を書き換えるのはこの hook だけ |
 | `use-facilitators`            | TanStack Query の状態を、手元の結果、それがいまの条件の結果か、画面に出すもの (本体・ローダー・エラーダイアログ)、リトライの関数に直す                                                             |
-| `use-last-page-correction`    | いまの条件の結果が範囲外なら、URL を最終ページに置き換える (履歴は積まない)                                                                                                                        |
+| `use-last-page-correction`    | いまの条件の結果が範囲外なら、URL の hook の `replacePage` で最終ページに置き換える (履歴は積まない)                                                                                               |
 | `facilitator-list-page`       | 3 つの hook を呼び、返った値を部品に渡す。検索の確定で URL が変わらなかったら取り直しを呼ぶ (同じ条件かは URL の hook が判定する)。出し分けの規則と取得の仕組みは持たない                          |
 | 共有の部品 (`src/components`) | 渡された値を表示し、操作を関数で知らせる。先生も API も知らない                                                                                                                                    |
 
