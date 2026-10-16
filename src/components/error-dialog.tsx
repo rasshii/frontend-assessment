@@ -7,7 +7,7 @@ type ErrorDialogProps = {
 
 /**
  * 通信エラーのダイアログ。ボタンは「リトライ」だけ。
- * 開閉は open だけで決め、onOpenChange を渡さない。Esc や外側の押下で Base UI が閉じようとしても
+ * 開閉は open だけで決め、onOpenChange を渡さない。Esc や外側のクリックで Base UI が閉じようとしても
  * open が変わらないので閉じない (閉じるのは、リトライで取り直しが始まったとき)。
  */
 export function ErrorDialog({ open, onRetry }: ErrorDialogProps) {

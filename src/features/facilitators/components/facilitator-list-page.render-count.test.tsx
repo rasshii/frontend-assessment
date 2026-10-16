@@ -41,7 +41,7 @@ vi.mock(
   },
 );
 
-/** 最初の 1 回だけすぐ返し、その後は遅らせる。fail が true を返す要求は 500 にする。受けた要求の数を返す */
+/** 最初の 1 回だけすぐ返し、そのあとは遅らせる。fail が true を返す要求は 500 にする。受けた要求の数を返す */
 function respondWith(fail: (url: URL, count: number) => boolean = () => false) {
   let count = 0;
   server.use(
