@@ -28,6 +28,10 @@
             ],
             "patterns": [
               {
+                "group": ["react-router/**"],
+                "message": "この置き場は依存の向きの決まりに無い。置き場を決め、.oxlintrc.json に範囲を足す"
+              },
+              {
                 "group": ["@/app/**", "@/features/**", "@/testing/**"],
                 "message": "この置き場は依存の向きの決まりに無い。置き場を決め、.oxlintrc.json に範囲を足す"
               },
@@ -54,6 +58,10 @@
               }
             ],
             "patterns": [
+              {
+                "group": ["react-router/**"],
+                "message": "react-router は app/router.tsx と use-facilitator-list-params.ts だけが使う"
+              },
               {
                 "group": ["@/app/**", "@/features/**"],
                 "message": "共有の層 (components / lib) は、app と features を import しない"
@@ -85,6 +93,10 @@
               }
             ],
             "patterns": [
+              {
+                "group": ["react-router/**"],
+                "message": "react-router は app/router.tsx と use-facilitator-list-params.ts だけが使う"
+              },
               {
                 "group": ["@/app/**"],
                 "message": "features は app を import しない"
@@ -121,6 +133,10 @@
             ],
             "patterns": [
               {
+                "group": ["react-router/**"],
+                "message": "react-router は app/router.tsx と use-facilitator-list-params.ts だけが使う"
+              },
+              {
                 "group": ["@/app/**"],
                 "message": "features は app を import しない"
               },
@@ -154,6 +170,10 @@
               }
             ],
             "patterns": [
+              {
+                "group": ["react-router/**"],
+                "message": "react-router は app/router.tsx と use-facilitator-list-params.ts だけが使う"
+              },
               {
                 "group": ["@/app/**"],
                 "message": "features は app を import しない"
@@ -214,6 +234,10 @@
               }
             ],
             "patterns": [
+              {
+                "group": ["react-router/**"],
+                "message": "react-router は app/router.tsx と use-facilitator-list-params.ts だけが使う"
+              },
               {
                 "group": ["@/app/**"],
                 "message": "features は app を import しない"

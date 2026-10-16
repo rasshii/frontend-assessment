@@ -35,9 +35,8 @@ type FetchJsonOptions = {
  * URL から JSON を取得する。失敗は HttpError で投げる。
  *
  * 呼び出し元の中断 (signal) だけは HttpError にせず、元のエラー (AbortError) のまま投げる。
- * TanStack Query は、条件を切り替えたときに前の取得を中断し、その取得を失敗ではなく
- * 取り消しとして扱う (クエリを取得の前の状態に戻す)。ここで失敗に変えると、
- * 切り替えのたびにエラーダイアログが出てしまう。
+ * 中断は通信の失敗ではないので、失敗の種類に数えない。TanStack Query は、条件を切り替えて
+ * 前の取得を中断すると、この関数が何を投げても取り消しとして扱う (クエリを前の状態に戻す)。
  *
  * @see https://tanstack.com/query/v5/docs/framework/react/guides/query-cancellation
  */
