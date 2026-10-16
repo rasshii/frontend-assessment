@@ -56,23 +56,35 @@ oxlint と ESLint は、別々のコマンドで流します ([ADR 0006](docs/ad
 
 一覧の条件は URL に置き、URL が変わると取得し直し、取得の状態から画面に出すものを決めて描画します。
 
-```text
-URL のクエリ (page・sort・order・search)
-   │                         ▲
-   │ 読む                     │ 書き換える (ページ送り・ソート・検索)
-   ▼                         │
-URL を読み書きする hook (use-facilitator-list-params)
-   │ 一覧の条件
-   ▼
-取得の hook (use-facilitators)
-   │ TanStack Query (キー = 一覧の条件)
-   │   → 取得関数 (fetch-facilitators: 応答の検証と分類)
-   │   → GET /api/facilitators (開発サーバが API へ中継する)
-   ▼
-画面に出すものを決める純粋な関数 (list-view)
-   │ 本体 (表 / 0 件の文言 / なし)・ローダー・エラーダイアログ
-   ▼
-ページ (facilitator-list-page) と部品 (検索欄・表・行・件数表示・ページャ・ローダー・ダイアログ)
+```mermaid
+flowchart TB
+  subgraph browser["ブラウザ"]
+    url["URL のクエリ<br/>page・sort・order・search"]
+    subgraph spa["React アプリ"]
+      page["一覧のページ<br/>(facilitator-list-page)"]
+      params["URL の条件の hook<br/>(use-facilitator-list-params)"]
+      lastpage["最終ページへの移動の hook<br/>(use-last-page-correction)"]
+      facilitators["取得の hook<br/>(use-facilitators)"]
+      view["画面に出すものを決める関数 (list-view)<br/>本体 (表 / 0 件の文言 / なし)・ローダー・ダイアログ"]
+      tq["TanStack Query<br/>(キー = 一覧の条件)"]
+      fetcher["取得関数<br/>(応答の検証と分類)"]
+      parts["部品<br/>(検索欄・表・行・件数表示・ページャ・ローダー・ダイアログ)"]
+    end
+  end
+  proxy["中継 (Vite の開発サーバ / preview)<br/>/api をそのまま転送"]
+  api["課題の API<br/>GET /api/facilitators"]
+
+  url -- "読む" --> params
+  params -- "書き換える (ページ送り・ソート・検索)" --> url
+  lastpage -- "範囲外なら最終ページに置き換える" --> url
+  page --> params
+  page --> facilitators
+  page --> lastpage
+  page -- "値と操作の関数を渡す" --> parts
+  params -- "一覧の条件" --> facilitators
+  facilitators --> view
+  facilitators --> tq --> fetcher
+  fetcher -- "同じオリジンの /api" --> proxy --> api
 ```
 
 いまの条件の結果が範囲外 (存在しないページ) のときは、3 つ目の hook (`use-last-page-correction`) が URL を最終ページに置き換えます。
@@ -105,6 +117,34 @@ src/
 ```
 
 import の向きは `app` → `features` → 共有の層 (`src/components`・`src/lib`) の一方向で、`features` の中は `components` → `hooks` → `api` → `lib` の一方向です。この決まりは lint で止めます ([ADR 0005](docs/adr/0005-feature-directories-and-dependency-rules.md))。
+
+矢印は import の向きです (テストのファイルを除く)。`features` から共有の層への矢印は、`features` の 4 つの置き場からの import をまとめたものです。
+
+```mermaid
+flowchart TB
+  app["src/app<br/>プロバイダ・ルータ・ヘッダーの枠"]
+  subgraph features["src/features/facilitators"]
+    direction TB
+    fc["components<br/>ページ・検索欄・表・行"]
+    fh["hooks<br/>URL の条件・取得・最終ページへの移動"]
+    fa["api<br/>スキーマ・取得関数・取得の設定"]
+    fl["lib<br/>型・URL の値の解釈・結果の分類・画面に出すもの"]
+    fc --> fh
+    fc --> fl
+    fh --> fa
+    fh --> fl
+    fa --> fl
+  end
+  subgraph shared["共有の層"]
+    direction LR
+    sc["src/components<br/>ヘッダー・ページャ・件数表示・ローダー・ダイアログなど"]
+    sl["src/lib<br/>ページ数の計算・JSON の取得"]
+    sc --> sl
+  end
+  app --> fc
+  app --> sc
+  features --> shared
+```
 
 ## 仕様の解釈
 
