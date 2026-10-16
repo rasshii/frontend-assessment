@@ -31,7 +31,7 @@ describe("ErrorDialog", () => {
     expect(onRetry).toHaveBeenCalledTimes(1);
   });
 
-  it("Esc と外側の押下では閉じない", async () => {
+  it("Esc と外側のクリックでは閉じない", async () => {
     const user = userEvent.setup();
     render(<ErrorDialog open={true} onRetry={vi.fn()} />);
 

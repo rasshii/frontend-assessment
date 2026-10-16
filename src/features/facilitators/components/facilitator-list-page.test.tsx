@@ -140,7 +140,7 @@ describe("FacilitatorListPage", () => {
   });
 
   it("存在しないページで開くと、表を出さずにローダーを出し、最終ページに移る", async () => {
-    // 最終ページの応答を止めておき、範囲外の結果が届いた後の画面を確かめてから返す
+    // 最終ページの応答を止めておき、範囲外の結果が届いたあとの画面を確かめてから返す
     let releaseLastPage = () => {};
     const lastPageHeld = new Promise<void>((resolve) => {
       releaseLastPage = resolve;
