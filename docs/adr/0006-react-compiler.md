@@ -2,7 +2,7 @@
 
 ## 状態
 
-採用。ESLint と oxlint の両方を流す lint の段 (scripts と CI) は、scripts と CI を足す変更で入れます。
+採用。ESLint と oxlint を 1 つのコマンドで両方流す形 (`pnpm lint`) と CI は、まだ入れていません。いまは `pnpm lint` (oxlint) と `pnpm exec eslint .` を別々に流します。
 
 ## 文脈
 
