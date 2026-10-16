@@ -41,7 +41,7 @@ function ListProbe() {
 }
 
 describe("useLastPageCorrection", () => {
-  it("いまの条件の結果が範囲外なら、最終ページで置き換える", () => {
+  it("いまの条件の結果が範囲外なら、最終ページに置き換える", () => {
     const replacePage = vi.fn();
     renderWithProviders(
       <Probe

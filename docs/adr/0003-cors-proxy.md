@@ -18,10 +18,10 @@
 
 - ブラウザから見て同じオリジンの `/api` にすれば、CORS の制限は掛かりません。中継はサーバ (開発サーバの Node.js) から API への通信なので、CORS の対象外です。
 - アプリは相対パスだけを知ればよく、API がどこにあるかを知りません。中継先を変えるときに、アプリのコードは変わりません。
-- `vite preview` の `preview.proxy` の既定値は `server.proxy` です (Vite の doc の preview options)。そのため、build したものを `vite preview` で配るとき (起動用のコンテナ) にも、同じ中継が効きます。`vite preview` は手元での確認用で、本番向けのサーバではありません (Vite の doc)。本番での配布は、この repo の範囲の外です。
+- `vite preview` の `preview.proxy` の既定値は `server.proxy` です (Vite の doc の preview options)。そのため、ビルドしたものを `vite preview` で配るとき (予定している起動用のコンテナ) にも、同じ中継が効きます。`vite preview` は手元での確認用で、本番向けのサーバではありません (Vite の doc)。本番での配布は、この repo の範囲の外です。
 
 ## 採らなかった案
 
-- **`fetch` に `mode: 'no-cors'` を付ける**: 応答の中身を読めない応答 (opaque) になり、一覧を作れません。
+- **`fetch` に `mode: 'no-cors'` を付ける**: 中身を読めない応答 (opaque response) になり、一覧を作れません。
 - **第三者の CORS プロキシを使う**: 外部のサービスの状態に、画面が動くかどうかが左右されます。
 - **中継用のサーバを自前で書く**: Vite の設定 1 つで足りるのに、動かすものが増えます。
