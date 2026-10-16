@@ -79,7 +79,8 @@ describe("FacilitatorListPage", () => {
     expect(
       await screen.findByRole("alertdialog", { name: DIALOG_NAME }),
     ).toBeInTheDocument();
-    expect(screen.queryByRole("table")).toBeNull();
+    // ダイアログが開くと外側の要素に aria-hidden が付くので、hidden: true で探す (付けないと、表があっても見つからない)
+    expect(screen.queryByRole("table", { hidden: true })).toBeNull();
   });
 
   it("失敗してリトライすると、同じ条件を取り直し、成功したらダイアログを閉じる", async () => {
@@ -111,7 +112,8 @@ describe("FacilitatorListPage", () => {
 
     // 失敗すると、前の一覧は消える (前の結果の引き継ぎは、データが無く取得中のあいだだけ)
     await screen.findByRole("alertdialog", { name: DIALOG_NAME });
-    expect(screen.queryByRole("table")).toBeNull();
+    expect(screen.queryByRole("table", { hidden: true })).toBeNull();
+    expect(screen.queryByText(/件中/)).toBeNull();
 
     failPage2 = false;
     await user.click(screen.getByRole("button", { name: "リトライ" }));
@@ -138,11 +140,36 @@ describe("FacilitatorListPage", () => {
   });
 
   it("存在しないページで開くと、表を出さずにローダーを出し、最終ページに移る", async () => {
-    countRequests();
+    // 最終ページの応答を止めておき、範囲外の結果が届いた後の画面を確かめてから返す
+    let releaseLastPage = () => {};
+    const lastPageHeld = new Promise<void>((resolve) => {
+      releaseLastPage = resolve;
+    });
+    let lastPageRequested = false;
+    server.use(
+      http.get("/api/facilitators", async ({ request }) => {
+        const url = new URL(request.url);
+        if (url.searchParams.get("page") === "2") {
+          lastPageRequested = true;
+          await lastPageHeld;
+        }
+        return HttpResponse.json(respondFacilitators(url, defaultFacilitators));
+      }),
+    );
     renderWithProviders(<FacilitatorListPage />, {
       initialEntry: "/?page=5",
     });
 
+    // 範囲外の結果が届き、最終ページを取得している時点: ローダーだけで、本体は何も出ない
+    await waitFor(() => expect(lastPageRequested).toBe(true));
+    expect(
+      screen.getByRole("status", { name: "読み込み中" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("table")).toBeNull();
+    expect(screen.queryByText(/件中/)).toBeNull();
+    expect(screen.queryByText("該当するデータはありません")).toBeNull();
+
+    releaseLastPage();
     expect(
       await screen.findByText("30件中 21〜30件を表示"),
     ).toBeInTheDocument();

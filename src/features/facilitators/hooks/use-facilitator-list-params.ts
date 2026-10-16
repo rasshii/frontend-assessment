@@ -21,13 +21,15 @@ export function useFacilitatorListParams() {
    * (setSearchParams は、同じタイミングでの複数回の呼び出しを積み上げないため)。
    * 条件が変わらない操作 (いまのページの番号を押した、同じ検索語で確定した) では、同じ条件の履歴を積まない。
    * いまの URL は既定値を書いていたり並びが違ったりしうるので、条件を書き出した形どうしで比べる。
+   * 書き換えたかを返す。同じ条件かの判定はここだけに置き、呼び出し側は返り値で分ける。
    */
-  function navigate(next: ListParams, { replace = false } = {}) {
+  function navigate(next: ListParams, { replace = false } = {}): boolean {
     const nextSearchParams = toSearchParams(next);
     if (nextSearchParams.toString() === toSearchParams(params).toString()) {
-      return;
+      return false;
     }
     setSearchParams(nextSearchParams, { replace });
+    return true;
   }
 
   return {
@@ -40,7 +42,7 @@ export function useFacilitatorListParams() {
     /** 列見出しのソートを切り替え、1 ページ目に戻す */
     toggleSort: (key: SortKey) =>
       navigate({ ...params, ...getNextSort(params, key), page: 1 }),
-    /** 検索を確定する。前後の空白を除き、1 ページ目に戻す */
+    /** 検索を確定する。前後の空白を除き、1 ページ目に戻す。いまと同じ条件なら URL を書き換えず false を返す */
     submitSearch: (input: string) =>
       navigate({ ...params, search: normalizeSearch(input), page: 1 }),
   };

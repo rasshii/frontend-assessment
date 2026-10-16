@@ -1,5 +1,6 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useState } from "react";
 import { useLocation, useNavigate, useNavigationType } from "react-router";
 import { describe, expect, it } from "vitest";
 import { useFacilitatorListParams } from "@/features/facilitators/hooks/use-facilitator-list-params";
@@ -12,9 +13,11 @@ function Probe() {
   const location = useLocation();
   const navigationType = useNavigationType();
   const navigate = useNavigate();
+  const [submitted, setSubmitted] = useState<boolean>();
   return (
     <>
       <p data-testid="params">{JSON.stringify(params)}</p>
+      <p data-testid="submitted">{String(submitted)}</p>
       <p data-testid="search">{location.search}</p>
       <p data-testid="navigation-type">{navigationType}</p>
       <button type="button" onClick={() => changePage(2)}>
@@ -29,7 +32,10 @@ function Probe() {
       <button type="button" onClick={() => toggleSort("loginId")}>
         ログインID
       </button>
-      <button type="button" onClick={() => submitSearch("  先生 ")}>
+      <button
+        type="button"
+        onClick={() => setSubmitted(submitSearch("  先生 "))}
+      >
         検索
       </button>
       <button type="button" onClick={() => void navigate(-1)}>
@@ -111,6 +117,18 @@ describe("useFacilitatorListParams", () => {
       order: "asc",
       search: "先生",
     });
+  });
+
+  it("検索の確定は URL を書き換えたかを返し、同じ条件なら false を返す", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Probe />, { initialEntry: "/?page=2" });
+
+    await user.click(screen.getByRole("button", { name: "検索" }));
+    expect(screen.getByTestId("submitted").textContent).toBe("true");
+
+    await user.click(screen.getByRole("button", { name: "検索" }));
+    expect(screen.getByTestId("submitted").textContent).toBe("false");
+    expect(currentSearch()).toBe(`?${new URLSearchParams({ search: "先生" })}`);
   });
 
   it("URL が変わらない操作では、履歴を積まない", async () => {

@@ -19,3 +19,14 @@
     "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, "Noto Sans JP",
     "Noto Sans CJK JP", sans-serif;
 }
+
+/*
+ * Tailwind CSS v4 は、ボタンのカーソルをブラウザの既定 (矢印) にする。
+ * 押せるボタンでは指の形に戻す (押せないボタンは矢印のまま。Tailwind の移行の手引きの書き方)。
+ */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}

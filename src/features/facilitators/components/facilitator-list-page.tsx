@@ -11,7 +11,6 @@ import { useFacilitatorListParams } from "@/features/facilitators/hooks/use-faci
 import { useFacilitators } from "@/features/facilitators/hooks/use-facilitators";
 import { useLastPageCorrection } from "@/features/facilitators/hooks/use-last-page-correction";
 import { PAGE_SIZE } from "@/features/facilitators/lib/facilitator";
-import { normalizeSearch } from "@/features/facilitators/lib/list-params";
 import { getTotalPages } from "@/lib/pagination";
 
 /**
@@ -23,15 +22,6 @@ export function FacilitatorListPage() {
     useFacilitatorListParams();
   const { result, isCurrent, view, retry } = useFacilitators(params);
   useLastPageCorrection({ result, isCurrent, replacePage });
-
-  /** 確定した条件がいまと同じなら取り直す (同じ検索語で確定しても、取得し直す) */
-  function handleSearch(input: string) {
-    if (normalizeSearch(input) === params.search && params.page === 1) {
-      retry();
-      return;
-    }
-    submitSearch(input);
-  }
 
   /*
    * 行の要素は取得結果だけから先に作る。下の条件の中に書くと、React Compiler が表のまとまりと一緒に覚え、
@@ -48,7 +38,13 @@ export function FacilitatorListPage() {
           <TeacherIcon />
           先生
         </h1>
-        <FacilitatorSearchForm search={params.search} onSubmit={handleSearch} />
+        <FacilitatorSearchForm
+          search={params.search}
+          onSubmit={(input) => {
+            // いまと同じ条件で確定すると URL が変わらず取得も始まらないので、取り直す
+            if (!submitSearch(input)) retry();
+          }}
+        />
       </div>
       <section
         aria-label="検索結果"

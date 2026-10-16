@@ -30,7 +30,8 @@ export function normalizeSearch(input: string) {
 /**
  * URL のクエリの解釈。値が無い・解釈できないときは、項目ごとに既定値にする (.catch)。
  * ページは 1 以上の整数の表記だけを受ける ("0"、"1.5"、"01"、"abc" は 1 ページ目)。
- * 安全な整数に収まらない桁数も 1 ページ目にする (数にすると Infinity や指数表記になり、API に送れないため)。
+ * 安全な整数 (Number.MAX_SAFE_INTEGER) を超える値も 1 ページ目にする。数にすると丸められて URL の数字と別のページになり、
+ * 22 桁以上は指数表記、310 桁以上は Infinity になって、API に送れる値にならないため。
  */
 const listParamsSchema = z.object({
   page: z

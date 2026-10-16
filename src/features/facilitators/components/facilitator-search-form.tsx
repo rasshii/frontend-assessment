@@ -35,6 +35,7 @@ export function FacilitatorSearchForm({
     <form role="search" onSubmit={handleSubmit} className="relative w-84">
       <input
         type="text"
+        name="search"
         aria-label="名前、ログインIDで検索"
         placeholder="名前、ログインIDで検索"
         value={input}

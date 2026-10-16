@@ -41,7 +41,7 @@ vi.mock(
   },
 );
 
-/** 最初の 1 回だけすぐ返し、その後は遅らせる。fail が true を返す要求は 500 にする */
+/** 最初の 1 回だけすぐ返し、その後は遅らせる。fail が true を返す要求は 500 にする。受けた要求の数を返す */
 function respondWith(fail: (url: URL, count: number) => boolean = () => false) {
   let count = 0;
   server.use(
@@ -53,6 +53,7 @@ function respondWith(fail: (url: URL, count: number) => boolean = () => false) {
       return HttpResponse.json(respondFacilitators(url, defaultFacilitators));
     }),
   );
+  return () => count;
 }
 
 beforeEach(() => {
@@ -60,9 +61,9 @@ beforeEach(() => {
 });
 
 describe("行の部品の描画回数", () => {
-  it("(a) 検索欄に打っているあいだは増えない", async () => {
+  it("(a) 検索欄に打っているあいだは増えず、取得も始まらない", async () => {
     const user = userEvent.setup();
-    respondWith();
+    const requests = respondWith();
     renderWithProviders(<FacilitatorListPage />);
     await screen.findByText("30件中 1〜20件を表示");
     const before = rowsRenders.count;
@@ -73,6 +74,8 @@ describe("行の部品の描画回数", () => {
     );
 
     expect(rowsRenders.count).toBe(before);
+    // 入力のたびに取得が始まる形でも、応答 (50ms 遅れる) が届く前は行の数が増えないので、取得が始まっていないことを要求の数で確かめる
+    expect(requests()).toBe(1);
   });
 
   it("(b) ページ送りでは、結果が届くまで増えず、届いたときに 1 回増える", async () => {
