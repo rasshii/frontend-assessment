@@ -11,6 +11,33 @@
   },
   "overrides": [
     {
+      "files": ["src/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "react-router",
+                "message": "この置き場は依存の向きの決まりに無い。置き場を決め、.oxlintrc.json に範囲を足す"
+              },
+              {
+                "name": "@tanstack/react-query",
+                "message": "この置き場は依存の向きの決まりに無い。置き場を決め、.oxlintrc.json に範囲を足す"
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["@/app/**", "@/features/**", "@/testing/**"],
+                "message": "この置き場は依存の向きの決まりに無い。置き場を決め、.oxlintrc.json に範囲を足す"
+              },
+              { "group": ["./*", "./**"], "message": "import は @/... で書く" }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "files": ["src/components/**", "src/lib/**"],
       "rules": {
         "no-restricted-imports": [
@@ -190,6 +217,10 @@
               {
                 "group": ["@/app/**"],
                 "message": "features は app を import しない"
+              },
+              {
+                "group": ["@/features/*/api/**"],
+                "message": "部品は取得の仕組みを知らない。hooks が返す値だけを使う"
               },
               {
                 "group": ["@/testing/**"],

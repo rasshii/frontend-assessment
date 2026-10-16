@@ -6,7 +6,7 @@ export const defaultFacilitators = createFacilitators(30);
 
 /**
  * GET /api/facilitators の応答を、本物の API と同じ順 (検索 → ソート → ページ分割) で作る。
- * 本物の API の振る舞いのうち、一覧が頼るものだけを写す (調査メモ 5 節)。
+ * 本物の API の振る舞いのうち、一覧が頼るものだけを写す。
  * - 検索は名前とログインID の部分一致 (OR)。英字の大文字と小文字は区別しない
  * - ソートは文字コード順。sort が無ければ id 順
  * - totalCount は検索のあとの件数。範囲外のページは空の data と元の totalCount

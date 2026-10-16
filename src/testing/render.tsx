@@ -10,7 +10,7 @@ type RenderWithProvidersOptions = Omit<RenderOptions, "wrapper"> & {
 };
 
 /**
- * 本体と同じプロバイダとルータで包んで描画する。
+ * 部品を QueryClientProvider とルータで包んで描画する。
  * QueryClient は本体と同じ関数で、呼ぶたびに新しく作る (テストどうしでキャッシュを混ぜない)。
  * ルータはブラウザの URL ではなくメモリの上の URL を使うので、テストごとに最初の URL を決められる。
  */

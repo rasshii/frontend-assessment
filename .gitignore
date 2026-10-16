@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
+# 手元のメモ (用語集、作業の記録)。repo には入れない
+*.local.md
 
 # Editor directories and files
 .vscode/*
