@@ -33,6 +33,14 @@ export function FacilitatorListPage() {
     submitSearch(input);
   }
 
+  /*
+   * 行の要素は取得結果だけから先に作る。下の条件の中に書くと、React Compiler が表のまとまりと一緒に覚え、
+   * ページ番号やソートが変わるたびに行の要素も作り直す (行のデータが同じでも、行の部品が描き直される)。
+   */
+  const rows = result !== undefined && (
+    <FacilitatorRows facilitators={result.facilitators} />
+  );
+
   return (
     <main className="mx-auto w-200 pt-6 pb-10">
       <div className="flex h-10 items-center justify-between">
@@ -54,7 +62,7 @@ export function FacilitatorListPage() {
               order={params.order}
               onSortChange={toggleSort}
             >
-              <FacilitatorRows facilitators={result.facilitators} />
+              {rows}
             </FacilitatorTable>
             <div className="mt-6 flex items-center justify-between">
               <ResultCount
