@@ -31,14 +31,13 @@ export default defineConfig({
        * API 側も /api/facilitators というパスなので、パスは変えずにそのまま送る。
        * changeOrigin: true にすると、送る要求の宛先名 (Host ヘッダ) を API のホスト名に直す。
        * 付けないと、宛先名が localhost:5173 のまま API に届く。
-       * vite preview (起動用のコンテナで使う) にも、この中継がそのまま使われる。
+       * vite preview にも、この中継がそのまま使われる。
        */
       "/api": { target: API_ORIGIN, changeOrigin: true },
     },
   },
   test: {
     environment: "jsdom",
-    // e2e/ の *.spec.ts は Playwright が流すので、Vitest の対象から外す
     include: ["src/**/*.test.{ts,tsx}"],
     setupFiles: ["./src/testing/setup.ts"],
   },
