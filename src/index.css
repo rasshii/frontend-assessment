@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  /* Zeplin の名前つきの色。名前もデザインに合わせる */
+  --color-primary-1: #24473b;
+  --color-primary-2: #a7b5b1;
+  --color-primary-3: #d3dad8;
+  --color-primary-4: #e9eceb;
+  --color-on-surface: #212423;
+  --color-on-surface-weak: #4f6c62;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #f8f9f9;
+
+  /*
+   * デザインの書体 (Hiragino Sans) を持つのは macOS だけ。
+   * Windows は Meiryo、Linux は Noto Sans 系に落とす。
+   */
+  --font-sans:
+    "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, "Noto Sans JP",
+    "Noto Sans CJK JP", sans-serif;
+}
