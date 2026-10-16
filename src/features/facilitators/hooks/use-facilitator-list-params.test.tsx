@@ -121,4 +121,13 @@ describe("useFacilitatorListParams", () => {
 
     expect(screen.getByTestId("navigation-type").textContent).toBe("POP");
   });
+
+  it("並びの違う URL でも、条件が同じなら履歴を積まない", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Probe />, { initialEntry: "/?sort=loginId&page=2" });
+
+    await user.click(screen.getByRole("button", { name: "2 ページへ" }));
+
+    expect(screen.getByTestId("navigation-type").textContent).toBe("POP");
+  });
 });

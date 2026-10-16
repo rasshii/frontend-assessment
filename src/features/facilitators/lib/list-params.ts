@@ -30,12 +30,14 @@ export function normalizeSearch(input: string) {
 /**
  * URL のクエリの解釈。値が無い・解釈できないときは、項目ごとに既定値にする (.catch)。
  * ページは 1 以上の整数の表記だけを受ける ("0"、"1.5"、"01"、"abc" は 1 ページ目)。
+ * 安全な整数に収まらない桁数も 1 ページ目にする (数にすると Infinity や指数表記になり、API に送れないため)。
  */
 const listParamsSchema = z.object({
   page: z
     .string()
     .regex(/^[1-9][0-9]*$/)
     .transform(Number)
+    .refine(Number.isSafeInteger)
     .catch(DEFAULT_LIST_PARAMS.page),
   sort: z.enum(["name", "loginId"]).catch(DEFAULT_LIST_PARAMS.sort),
   order: z.enum(["asc", "desc"]).catch(DEFAULT_LIST_PARAMS.order),

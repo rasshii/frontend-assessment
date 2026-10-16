@@ -1,5 +1,5 @@
 import { delay, http, HttpResponse } from "msw";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { fetchJson, HttpError } from "@/lib/http";
 import { server } from "@/testing/server";
 
@@ -65,6 +65,33 @@ describe("fetchJson", () => {
 
     expect(error).toBeInstanceOf(HttpError);
     expect(error).toMatchObject({ kind: "timeout" });
+  });
+
+  it("呼び出し元の signal を渡していても、上限までに応答が無ければ timeout", async () => {
+    server.use(
+      http.get("/api/test", async () => {
+        await delay(200);
+        return HttpResponse.json({});
+      }),
+    );
+    const controller = new AbortController();
+
+    const error = await catchError(
+      fetchJson("/api/test", { signal: controller.signal, timeoutMs: 50 }),
+    );
+
+    expect(error).toBeInstanceOf(HttpError);
+    expect(error).toMatchObject({ kind: "timeout" });
+  });
+
+  it("上限を渡さなければ 10 秒で打ち切る", async () => {
+    const timeout = vi.spyOn(AbortSignal, "timeout");
+    server.use(http.get("/api/test", () => HttpResponse.json({})));
+
+    await fetchJson("/api/test");
+
+    expect(timeout).toHaveBeenCalledWith(10_000);
+    timeout.mockRestore();
   });
 
   it("呼び出し元の中断は HttpError にせず、AbortError のまま投げる", async () => {

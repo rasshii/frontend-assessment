@@ -21,7 +21,7 @@ export class HttpError extends Error {
   }
 }
 
-/** 応答を待つ上限 (完了条件 H の 10 秒) */
+/** 応答を待つ上限 (10 秒)。超えたら通信の失敗 (timeout) として扱う */
 const DEFAULT_TIMEOUT_MS = 10_000;
 
 type FetchJsonOptions = {

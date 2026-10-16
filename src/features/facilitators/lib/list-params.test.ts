@@ -20,7 +20,7 @@ describe("parseListParams", () => {
     ).toEqual({ page: 3, sort: "loginId", order: "desc", search: "abc" });
   });
 
-  it.each(["0", "-1", "1.5", "01", "abc", ""])(
+  it.each(["0", "-1", "1.5", "01", "abc", "", "99999999999999999999"])(
     "page=%s は解釈できないので 1 ページ目",
     (page) => {
       expect(parseListParams(new URLSearchParams({ page })).page).toBe(1);

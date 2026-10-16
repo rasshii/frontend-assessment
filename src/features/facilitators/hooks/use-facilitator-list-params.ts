@@ -19,11 +19,14 @@ export function useFacilitatorListParams() {
   /**
    * 1 回の操作は 1 回の書き換えにまとめる
    * (setSearchParams は、同じタイミングでの複数回の呼び出しを積み上げないため)。
-   * URL が変わらないとき (いまのページの番号を押した、同じ検索語で確定した) は、同じ条件の履歴を積まない。
+   * 条件が変わらない操作 (いまのページの番号を押した、同じ検索語で確定した) では、同じ条件の履歴を積まない。
+   * いまの URL は既定値を書いていたり並びが違ったりしうるので、条件を書き出した形どうしで比べる。
    */
   function navigate(next: ListParams, { replace = false } = {}) {
     const nextSearchParams = toSearchParams(next);
-    if (nextSearchParams.toString() === searchParams.toString()) return;
+    if (nextSearchParams.toString() === toSearchParams(params).toString()) {
+      return;
+    }
     setSearchParams(nextSearchParams, { replace });
   }
 
