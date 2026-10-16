@@ -1,6 +1,6 @@
 /**
  * 先生のテスト用データ。API (GET /api/facilitators) の応答の data に入る 1 件と同じ形で作る。
- * 単体・部品のテスト (MSW) と E2E が、同じ関数でデータを作る。
+ * ユニットテスト (MSW) と E2E が、同じ関数でデータを作る。
  */
 export type FacilitatorRecord = {
   id: number;
